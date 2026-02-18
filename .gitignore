@@ -1,0 +1,9 @@
+### IntelliJ IDEA ###
+out/
+.idea/
+target/
+logs/
+.sh
+
+### Mac OS ###
+.DS_Store.idea/
