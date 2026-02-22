@@ -7,5 +7,7 @@ export TEST_CPASSWORD="123"
 export TEST_BIRTHDATE_DD="17"
 export TEST_BIRTHDATE_MM="02"
 export TEST_BIRTHDATE_YYYY="2026"
+export TEST_LEVEL="Продвинутый";
+export TEST_LEVEL_INGL="advanced";
 
-echo "Environment variables set!"
+echo "Переменные установлены"
