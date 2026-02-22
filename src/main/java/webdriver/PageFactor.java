@@ -106,9 +106,9 @@ public class PageFactor {
             return true;
         } else {
             String[] parts = dateValue.split("\\.");
-            String day = parts[0];      // "21"
-            String month = parts[1];    // "02"
-            String year = parts[2];      // "2020"
+            String day = parts[0];
+            String month = parts[1];
+            String year = parts[2];
 
             inputBirthdate.click();
             Actions actions = new Actions(driver);
