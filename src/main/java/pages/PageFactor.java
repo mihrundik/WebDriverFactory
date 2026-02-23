@@ -1,5 +1,7 @@
-package webdriver;
+package pages;
 
+import config.EnvConfig;
+import driverAutomation.AbstractWebDriver;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -7,15 +9,10 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration;
+public class PageFactor extends AbstractWebDriver  {
 
-
-public class PageFactor {
-
-    public final WebDriverWait wait;
-    private final WebDriver driver;
+    private PageFactor page;
 
     // используемые в тестах элементы страницы
     @FindBy(id = "username")
@@ -42,14 +39,11 @@ public class PageFactor {
     @FindBy(id = "output")
     private WebElement outputForm;
 
-
     // инициализируем класс и связываем объекты элементов на странице
     public PageFactor(WebDriver driver) {
-        this.driver = driver; 
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(1));
+        super(driver);
         PageFactory.initElements(driver, this);
     }
-
 
     // единая функция для заполнения полей
     private boolean fillField(WebElement element, String value) {
@@ -81,12 +75,11 @@ public class PageFactor {
         // отработка формы даты для safari отличается
         if (browserName.contains("safari")) {
             String[] parts = dateValue.split("\\.");
-            String day = parts[0];      // "21"
-            String month = parts[1];    // "02"
-            String year = parts[2];      // "2020"
+            String day = parts[0];
+            String month = parts[1];
+            String year = parts[2];
 
             inputBirthdate.click();
-            Actions actions = new Actions(driver);
 
             // день
             actions.sendKeys(Keys.BACK_SPACE).perform();
@@ -111,14 +104,11 @@ public class PageFactor {
             String year = parts[2];
 
             inputBirthdate.click();
-            Actions actions = new Actions(driver);
 
             // день
             actions.sendKeys(day).perform();
-
             // месяц
             actions.sendKeys(month).perform();
-
             // год
             actions.sendKeys(year).perform();
 
@@ -127,10 +117,9 @@ public class PageFactor {
         }
     }
 
-
     // функция выбора уровня владения языком
     public void selectInputLanguageLevel(String level) {
-        Select dropdown = new Select(inputLanguageLevel); // используем элемент из @FindBy
+        Select dropdown = new Select(inputLanguageLevel);
         dropdown.selectByVisibleText(level);
     }
 
@@ -141,7 +130,23 @@ public class PageFactor {
         return actualPassword.equals(actualConfirmPassword);
     }
 
-    // заполнение полей формы
+    // заполнение полей формы значениями из EnvConfig
+    public void fillFormWithConfig() {
+        String birthdate = EnvConfig.getBirthDay() + "." +
+                EnvConfig.getBirthMonth() + "." +
+                EnvConfig.getBirthYear();
+
+        fillForm(
+                EnvConfig.getUsername(),
+                EnvConfig.getEmail(),
+                EnvConfig.getPassword(),
+                EnvConfig.getCPassword(),
+                birthdate,
+                EnvConfig.getLevel()
+        );
+    }
+
+    // перегруженный метод для заполнения полей с параметрами
     public void fillForm(String name, String email, String password, String cPassword,
                          String birthdate, String language) {
         fillInputName(name);
@@ -153,6 +158,14 @@ public class PageFactor {
     }
 
     // отправка заполненной формы
+    public void submitForm() throws Exception {
+        if (!checkPasswordsMatch(EnvConfig.getPassword(), EnvConfig.getCPassword())) {
+            throw new Exception("Пароли не совпадают!");
+        }
+        inputForm.click();
+    }
+
+    // перегруженный метод для отправки формы с проверкой паролей
     public void submitForm(String password, String cPassword) throws Exception {
         if (!checkPasswordsMatch(password, cPassword)) {
             throw new Exception("Пароли не совпадают!");
@@ -164,5 +177,4 @@ public class PageFactor {
     public String readOutputForm() {
         return outputForm.getText();
     }
-
 }

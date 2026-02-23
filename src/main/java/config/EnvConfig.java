@@ -1,4 +1,4 @@
-package webdriver;
+package config;
 
 public class EnvConfig {
 
@@ -43,7 +43,7 @@ public class EnvConfig {
         return System.getenv("TEST_LEVEL_INGL");
     }
 
-//
+//      отладка
 //    public static final String TEST_URL = "https://otus.home.kartushin.su/form.html";
 //    public static final String TEST_USERNAME = "test_user";
 //    public static final String TEST_EMAIL = "test@test.ru";

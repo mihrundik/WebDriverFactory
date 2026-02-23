@@ -1,46 +1,43 @@
-package webdriver;
+package factory;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
-import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.remote.AbstractDriverOptions;
 import org.openqa.selenium.safari.SafariDriver;
 import org.openqa.selenium.safari.SafariOptions;
 
 public class WebDriverFactory {
 
-    public static WebDriver create(String webDriverName, Capabilities options) {
+    public static WebDriver create(String webDriverName, AbstractDriverOptions<?> options) {
         String browser = webDriverName.toLowerCase();
 
         switch (browser) {
             case "chrome":
                 WebDriverManager.chromedriver().setup();
-                // если опции предоставлены и они являются ChromeOptions, используем их
-                if (options instanceof ChromeOptions) {
+                if (options != null) {
                     return new ChromeDriver((ChromeOptions) options);
                 } else {
-                    return new ChromeDriver(); // иначе создаем с опциями по умолчанию
+                    return new ChromeDriver();
                 }
 
             case "firefox":
                 WebDriverManager.firefoxdriver().setup();
-                // если опции предоставлены и они являются FirefoxOptions, используем их
-                if (options instanceof FirefoxOptions) {
+                if (options != null) {
                     return new FirefoxDriver((FirefoxOptions) options);
                 } else {
-                    return new FirefoxDriver();  // иначе создаем с опциями по умолчанию
+                    return new FirefoxDriver();
                 }
 
             case "safari":
                 WebDriverManager.safaridriver().setup();
-                // если опции предоставлены и они являются SafariOptions, используем их
-                if (options instanceof SafariOptions) {
+                if (options != null) {
                     return new SafariDriver((SafariOptions) options);
                 } else {
-                    return new SafariDriver(); // иначе создаем с опциями по умолчанию
+                    return new SafariDriver();
                 }
 
             default:
@@ -48,7 +45,6 @@ public class WebDriverFactory {
         }
     }
 
-    // перегружаем метод для создания WebDriver без дополнительных опций
     public static WebDriver create(String webDriverName) {
         return create(webDriverName, null);
     }
