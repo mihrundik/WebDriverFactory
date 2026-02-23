@@ -11,18 +11,21 @@ import config.EnvConfig;
 import factory.WebDriverFactory;
 import pages.PageFactor;
 
+
 public abstract class AbstractBaseMethod extends AbstractWebDriver {
 
     public Logger log = LogManager.getLogger(AbstractBaseMethod.class);
     public PageFactor page;
     private final String URL = EnvConfig.getUrl();
 
-
     public WebDriver getCurrentDriver() {
         return super.getDriver();
     }
 
-    // логирование успешности/неуспешности прохождения теста
+    protected Capabilities getOptions(String browserName) {
+        return null;
+    }
+
     public void statusTest(boolean isCorrect, String message) {
         if (!isCorrect) {
             log.error("{}: Ошибка!", message);
@@ -31,21 +34,36 @@ public abstract class AbstractBaseMethod extends AbstractWebDriver {
         }
     }
 
-    // по умолчанию опции не заданы
-    protected Capabilities getOptions(String browserName) {
-        return null;
-    }
-
     public void driverStart(TestInfo testInfo) {
-        // получаем имя браузера из переменных (по умолчанию "chrome")
+
         String browserName = System.getProperty("browser", "chrome");
-        log.info("Запуск теста: {} в браузере {}",
-                testInfo.getDisplayName(), browserName);
+
+        // проверяем опции в командной строке
+        String optionsFromCmd = null;
+        switch (browserName.toLowerCase()) {
+            case "chrome":
+                optionsFromCmd = System.getProperty("chromeOptions");
+                break;
+            case "firefox":
+                optionsFromCmd = System.getProperty("firefoxOptions");
+                break;
+            case "safari":
+                optionsFromCmd = System.getProperty("safariOptions");
+                break;
+        }
 
         // получаем опции из метода, который может быть переопределен в дочернем классе
         Capabilities options = getOptions(browserName);
 
-        // cоздаем параметризированный драйвер
+        // если есть опции из командной строки - создаем новые опции
+        if (optionsFromCmd != null && !optionsFromCmd.isEmpty()) {
+            options = createOptionsFromString(browserName, optionsFromCmd);
+        }
+
+        log.info("Запуск теста: {} в браузере {}:\n{}",
+                testInfo.getDisplayName(), browserName, options);
+
+        // создаем параметризированный драйвер
         WebDriver newDriver = WebDriverFactory.create(browserName, (AbstractDriverOptions<?>) options);
 
         // устанавливаем параметризированный драйвер через родительский метод setDriver
@@ -53,5 +71,29 @@ public abstract class AbstractBaseMethod extends AbstractWebDriver {
 
         newDriver.get(URL);
         page = new PageFactor(newDriver);
+    }
+
+    // обрабатываем опции
+    private Capabilities createOptionsFromString(String browserName, String optionsString) {
+        String[] optionsArray = optionsString.split(",");
+
+        switch (browserName.toLowerCase()) {
+            case "chrome":
+                org.openqa.selenium.chrome.ChromeOptions chromeOptions =
+                        new org.openqa.selenium.chrome.ChromeOptions();
+                chromeOptions.addArguments(optionsArray);
+                return chromeOptions;
+            case "firefox":
+                org.openqa.selenium.firefox.FirefoxOptions firefoxOptions =
+                        new org.openqa.selenium.firefox.FirefoxOptions();
+                firefoxOptions.addArguments(optionsArray);
+                return firefoxOptions;
+            case "safari":  // у safari могут быть ососбенности в работе с selenium
+                org.openqa.selenium.safari.SafariOptions safariOptions =
+                        new org.openqa.selenium.safari.SafariOptions();
+                return safariOptions;
+            default:
+                throw new IllegalArgumentException("Неподдерживаемый браузер: " + browserName);
+        }
     }
 }

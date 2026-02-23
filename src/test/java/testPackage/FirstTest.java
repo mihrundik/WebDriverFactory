@@ -1,23 +1,40 @@
 package testPackage;
 
-import factory.settings.SafariOptions;
+import factory.settings.*;
 import methodForTest.AbstractBaseTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import config.EnvConfig;
-import factory.settings.ChromeOptions;
-import factory.settings.FirefoxOptions;
-import factory.settings.IsOptions;
 import org.openqa.selenium.Capabilities;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 
 public class FirstTest extends AbstractBaseTest {
 
     @Override
     protected Capabilities getOptions(String browserName) {
-        IsOptions options = null;
+        // проверяем, есть ли опции в командной строке
+        String optionsFromCmd = null;
+        switch (browserName.toLowerCase()) {
+            case "chrome":
+                optionsFromCmd = System.getProperty("chromeOptions");
+                break;
+            case "firefox":
+                optionsFromCmd = System.getProperty("firefoxOptions");
+                break;
+            case "safari":
+                optionsFromCmd = System.getProperty("safariOptions");
+                break;
+        }
 
+        // если есть - парсим их
+        if (optionsFromCmd != null && !optionsFromCmd.isEmpty()) {
+            return OptionsParser.parse(browserName, optionsFromCmd);
+        }
+
+        // или используем стандартные опции
+        IsOptions options = null;
         switch (browserName.toLowerCase()) {
             case "chrome":
                 options = new ChromeOptions();
@@ -32,8 +49,9 @@ public class FirstTest extends AbstractBaseTest {
                 throw new IllegalArgumentException("Неподдерживаемый браузер: " + browserName);
         }
 
-        return options.webDriverOptions(); // Получаем опции для выбранного браузера
+        return options.webDriverOptions();
     }
+
 
     @Test
     @DisplayName("Проверка формы регистрации")

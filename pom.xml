@@ -20,6 +20,11 @@
         <webdrivermanager.version>6.3.3</webdrivermanager.version>
         <junit-jupiter-api.version>5.11.0</junit-jupiter-api.version>
         <junit.version>RELEASE</junit.version>
+        <browser>chrome</browser>
+        <browserOptions/>
+        <chromeOptions/>
+        <firefoxOptions/>
+        <safariOptions/>
     </properties>
 
     <dependencies>
@@ -80,6 +85,14 @@
                 <configuration>
                     <target>${maven.compiler.target}</target>
                     <source>${maven.compiler.source}</source>
+                    <!-- обработка из командной строки -->
+                    <argLine>
+                        -Dbrowser=${browser}
+                        -DbrowserOptions=${browserOptions}
+                        -DchromeOptions=${chromeOptions}
+                        -DfirefoxOptions=${firefoxOptions}
+                        -DsafariOptions=${safariOptions}
+                    </argLine>
                 </configuration>
             </plugin>
             <plugin>

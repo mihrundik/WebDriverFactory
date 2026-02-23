@@ -2,6 +2,7 @@ package factory.settings;
 
 import org.openqa.selenium.remote.AbstractDriverOptions;
 
+
 public class SafariOptions implements IsOptions {
 
     @Override
