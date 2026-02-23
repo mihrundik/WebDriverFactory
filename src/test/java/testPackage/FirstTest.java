@@ -1,26 +1,38 @@
-package test_package;
+package testPackage;
 
+import factory.settings.SafariOptions;
+import methodForTest.AbstractBaseTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import config.EnvConfig;
+import factory.settings.ChromeOptions;
+import factory.settings.FirefoxOptions;
+import factory.settings.IsOptions;
 import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.chrome.ChromeOptions;
-import webdriver.AbstractClass;
-import webdriver.EnvConfig;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class FirstTest extends AbstractClass {
+public class FirstTest extends AbstractBaseTest {
 
     @Override
     protected Capabilities getOptions(String browserName) {
-        if ("chrome".equalsIgnoreCase(browserName)) {
-            ChromeOptions options = new ChromeOptions();
-            options.addArguments("--kiosk"); // запуск в режиме киоска для chrome по умолчанию
-            return options;
+        IsOptions options = null;
+
+        switch (browserName.toLowerCase()) {
+            case "chrome":
+                options = new ChromeOptions();
+                break;
+            case "firefox":
+                options = new FirefoxOptions();
+                break;
+            case "safari":
+                options = new SafariOptions();
+                break;
+            default:
+                throw new IllegalArgumentException("Неподдерживаемый браузер: " + browserName);
         }
-        // для других браузеров опции не задаем
-        return null;
+
+        return options.webDriverOptions(); // Получаем опции для выбранного браузера
     }
 
     @Test
@@ -30,7 +42,8 @@ public class FirstTest extends AbstractClass {
         String date = String.format("%s.%s.%s", EnvConfig.getBirthDay(), EnvConfig.getBirthMonth(), EnvConfig.getBirthYear());
         String birthdate = String.format("%s-%s-%s", EnvConfig.getBirthYear(), EnvConfig.getBirthMonth(), EnvConfig.getBirthDay());
 
-        page.fillForm(EnvConfig.getUsername(), EnvConfig.getEmail(), EnvConfig.getPassword(), EnvConfig.getCPassword(), date, EnvConfig.getLevel());
+        page.fillForm(EnvConfig.getUsername(), EnvConfig.getEmail(), EnvConfig.getPassword(),
+                EnvConfig.getCPassword(), date, EnvConfig.getLevel());
         page.submitForm(EnvConfig.getPassword(), EnvConfig.getCPassword());
 
         String resultMessage = page.readOutputForm();

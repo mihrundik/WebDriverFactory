@@ -9,10 +9,11 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+        <maven.version>3.14.1</maven.version>
+        <maven.compiler.source>22</maven.compiler.source>
+        <maven.compiler.target>22</maven.compiler.target>
+        <surefire-plagin.version>3.5.2</surefire-plagin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
         <selenium-java.version>4.40.0</selenium-java.version>
         <log4j-slf4j-impl.version>2.25.3</log4j-slf4j-impl.version>
         <webdrivermanager.version>6.3.3</webdrivermanager.version>
@@ -66,23 +67,25 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>6.0.2</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 
     <build>
-        <!-- плагин для автоматической сборки (в данном случае для файлов любого уровня вложенности с названием *Test.java в алфавитном порядке) -->
+        <!-- плагин для автоматической сборки (в данном случае для файлов любого уровня вложенности с названием *Test.java в алфавитном порядке(alphabetical)) -->
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.version}</version>
+                <configuration>
+                    <target>${maven.compiler.target}</target>
+                    <source>${maven.compiler.source}</source>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.5.2</version>
+                <version>${surefire-plagin.version}</version>
                 <configuration>
                     <includes>
 <!--                        <runOrder>alphabetical</runOrder>-->
