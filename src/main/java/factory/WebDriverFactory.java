@@ -10,6 +10,7 @@ import org.openqa.selenium.remote.AbstractDriverOptions;
 import org.openqa.selenium.safari.SafariDriver;
 import org.openqa.selenium.safari.SafariOptions;
 
+
 public class WebDriverFactory {
 
     public static WebDriver create(String webDriverName, AbstractDriverOptions<?> options) {
@@ -19,25 +20,46 @@ public class WebDriverFactory {
             case "chrome":
                 WebDriverManager.chromedriver().setup();
                 if (options != null) {
-                    return new ChromeDriver((ChromeOptions) options);
+                    // если опции переданы и это ChromeOptions
+                    if (options instanceof ChromeOptions) {
+                        return new ChromeDriver((ChromeOptions) options);
+                    } else {
+                        // если опции из командной строки - создаем новые ChromeOptions и копируем capabilities
+                        ChromeOptions chromeOptions = new ChromeOptions();
+                        options.asMap().forEach(chromeOptions::setCapability);
+                        return new ChromeDriver(chromeOptions);
+                    }
                 } else {
-                    return new ChromeDriver();
+                    // если опции не переданы, создаем драйвер с опциями по умолчанию (null)
+                    return new ChromeDriver(new ChromeOptions());
                 }
 
             case "firefox":
                 WebDriverManager.firefoxdriver().setup();
                 if (options != null) {
-                    return new FirefoxDriver((FirefoxOptions) options);
+                    if (options instanceof FirefoxOptions) {
+                        return new FirefoxDriver((FirefoxOptions) options);
+                    } else {
+                        FirefoxOptions firefoxOptions = new FirefoxOptions();
+                        options.asMap().forEach(firefoxOptions::setCapability);
+                        return new FirefoxDriver(firefoxOptions);
+                    }
                 } else {
-                    return new FirefoxDriver();
+                    return new FirefoxDriver(new FirefoxOptions());
                 }
 
             case "safari":
                 WebDriverManager.safaridriver().setup();
                 if (options != null) {
-                    return new SafariDriver((SafariOptions) options);
+                    if (options instanceof SafariOptions) {
+                        return new SafariDriver((SafariOptions) options);
+                    } else {
+                        SafariOptions safariOptions = new SafariOptions();
+                        options.asMap().forEach(safariOptions::setCapability);
+                        return new SafariDriver(safariOptions);
+                    }
                 } else {
-                    return new SafariDriver();
+                    return new SafariDriver(new SafariOptions());
                 }
 
             default:

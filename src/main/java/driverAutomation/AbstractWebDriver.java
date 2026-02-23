@@ -6,6 +6,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
+
 public abstract class AbstractWebDriver {
 
     protected WebDriver driver;
@@ -28,7 +29,7 @@ public abstract class AbstractWebDriver {
         }
     }
 
-    public WebDriver getDriver () {
+    public WebDriver getDriver() {
         return this.driver;
     }
 }

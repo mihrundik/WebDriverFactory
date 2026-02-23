@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 
+
 public abstract class AbstractBaseTest extends AbstractBaseMethod {
 
     protected WebDriver driver;
@@ -23,7 +24,6 @@ public abstract class AbstractBaseTest extends AbstractBaseMethod {
         driverStart(testInfo);
         this.driver = getCurrentDriver();
     }
-
 
     @AfterEach
     public void driverClose() {
