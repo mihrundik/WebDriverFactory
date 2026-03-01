@@ -85,14 +85,6 @@
                 <configuration>
                     <target>${maven.compiler.target}</target>
                     <source>${maven.compiler.source}</source>
-                    <!-- обработка из командной строки -->
-                    <argLine>
-                        -Dbrowser=${browser}
-                        -DbrowserOptions=${browserOptions}
-                        -DchromeOptions=${chromeOptions}
-                        -DfirefoxOptions=${firefoxOptions}
-                        -DsafariOptions=${safariOptions}
-                    </argLine>
                 </configuration>
             </plugin>
             <plugin>
@@ -101,9 +93,15 @@
                 <version>${surefire-plagin.version}</version>
                 <configuration>
                     <includes>
-<!--                        <runOrder>alphabetical</runOrder>-->
                         <include>**/*Test.java</include>
                     </includes>
+                    <argLine>
+                        -Dbrowser=${browser}
+                        -DbrowserOptions=${browserOptions}
+                        -DchromeOptions=${chromeOptions}
+                        -DfirefoxOptions=${firefoxOptions}
+                        -DsafariOptions=${safariOptions}
+                    </argLine>
                 </configuration>
             </plugin>
         </plugins>

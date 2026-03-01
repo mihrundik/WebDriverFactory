@@ -5,12 +5,13 @@ import driverAutomation.AbstractWebDriver;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.Select;
 
 
-public class PageFactor extends AbstractWebDriver  {
+public class PageFactor extends AbstractWebDriver {
 
     private PageFactor page;
 
@@ -68,53 +69,62 @@ public class PageFactor extends AbstractWebDriver  {
         return fillField(passwordConfirmation, cPassword);
     }
 
-    public boolean fillBirthDate(String dateValue) {
-        // Определяем браузер
-        String browserName = ((org.openqa.selenium.remote.RemoteWebDriver)driver).getCapabilities().getBrowserName().toLowerCase();
+    public void fillBirthDate(String dateValue) {
+        String browserName = getBrowserName();
 
-        // отработка формы даты для safari отличается
-        if (browserName.contains("safari")) {
-            String[] parts = dateValue.split("\\.");
-            String day = parts[0];
-            String month = parts[1];
-            String year = parts[2];
-
-            inputBirthdate.click();
-
-            // день
-            actions.sendKeys(Keys.BACK_SPACE).perform();
-            actions.sendKeys(day).perform();
-            actions.sendKeys(Keys.ARROW_RIGHT).perform();
-
-            // месяц
-            actions.sendKeys(Keys.BACK_SPACE).perform();
-            actions.sendKeys(month).perform();
-            actions.sendKeys(Keys.ARROW_RIGHT).perform();
-
-            // год
-            actions.sendKeys(Keys.BACK_SPACE).perform();
-            actions.sendKeys(year).perform();
-
-            actions.sendKeys(Keys.ENTER).perform();
-            return true;
+        if (isSafari(browserName)) {
+            fillBirthDateForSafari(dateValue);
         } else {
-            String[] parts = dateValue.split("\\.");
-            String day = parts[0];
-            String month = parts[1];
-            String year = parts[2];
-
-            inputBirthdate.click();
-
-            // день
-            actions.sendKeys(day).perform();
-            // месяц
-            actions.sendKeys(month).perform();
-            // год
-            actions.sendKeys(year).perform();
-
-            actions.sendKeys(Keys.ENTER).perform();
-            return true;
+            fillBirthDateStandard(dateValue);
         }
+    }
+
+    private boolean isSafari(String browserName) {
+        return browserName.contains("safari");
+    }
+
+    private String getBrowserName() {
+        return ((RemoteWebDriver) driver).getCapabilities().getBrowserName().toLowerCase();
+    }
+
+    public void fillBirthDateStandard(String dateValue) {
+        String[] parts = dateValue.split("\\.");
+        String day = parts[0];
+        String month = parts[1];
+        String year = parts[2];
+
+        inputBirthdate.click();
+        // день
+        actions.sendKeys(day).perform();
+        // месяц
+        actions.sendKeys(month).perform();
+        // год
+        actions.sendKeys(year).perform();
+
+        actions.sendKeys(Keys.ENTER).perform();
+    }
+
+    // логика обработки полей даты в Safari отличается
+    public void fillBirthDateForSafari(String dateValue) {
+        String[] parts = dateValue.split("\\.");
+        String day = parts[0];
+        String month = parts[1];
+        String year = parts[2];
+
+        inputBirthdate.click();
+        // день
+        actions.sendKeys(Keys.BACK_SPACE).perform();
+        actions.sendKeys(day).perform();
+        actions.sendKeys(Keys.ARROW_RIGHT).perform();
+        // месяц
+        actions.sendKeys(Keys.BACK_SPACE).perform();
+        actions.sendKeys(month).perform();
+        actions.sendKeys(Keys.ARROW_RIGHT).perform();
+        // год
+        actions.sendKeys(Keys.BACK_SPACE).perform();
+        actions.sendKeys(year).perform();
+
+        actions.sendKeys(Keys.ENTER).perform();
     }
 
     // функция выбора уровня владения языком
@@ -128,22 +138,6 @@ public class PageFactor extends AbstractWebDriver  {
         String actualPassword = inputPassword.getAttribute("value");
         String actualConfirmPassword = passwordConfirmation.getAttribute("value");
         return actualPassword.equals(actualConfirmPassword);
-    }
-
-    // заполнение полей формы значениями из EnvConfig
-    public void fillFormWithConfig() {
-        String birthdate = EnvConfig.getBirthDay() + "." +
-                EnvConfig.getBirthMonth() + "." +
-                EnvConfig.getBirthYear();
-
-        fillForm(
-                EnvConfig.getUsername(),
-                EnvConfig.getEmail(),
-                EnvConfig.getPassword(),
-                EnvConfig.getCPassword(),
-                birthdate,
-                EnvConfig.getLevel()
-        );
     }
 
     // перегруженный метод для заполнения полей с параметрами

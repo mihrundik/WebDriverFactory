@@ -1,5 +1,6 @@
 package methodForTest;
 
+import com.github.dockerjava.api.model.ContainerDNSConfig;
 import config.EnvConfig;
 import factory.WebDriverFactory;
 import org.junit.jupiter.api.*;
@@ -45,7 +46,7 @@ public abstract class AbstractBaseTest extends AbstractBaseMethod {
     }
 
 
-    protected Capabilities getOptions(String browserName) {
+    protected Capabilities getOptions(String browserName, ContainerDNSConfig OptionsProvider) {
         return null;
     }
 
@@ -81,11 +82,12 @@ public abstract class AbstractBaseTest extends AbstractBaseMethod {
         // создаем параметризированный драйвер
         WebDriver newDriver = WebDriverFactory.create(browserName, (AbstractDriverOptions<?>) options);
 
-        // устанавливаем параметризированный драйвер через родительский метод setDriver
+        // устанавливаем параметризированный драйвер
         setDriver(newDriver);
 
         newDriver.get(URL);
         page = new PageFactor(newDriver);
     }
 
+    protected abstract Capabilities getOptions(String browserName);
 }
