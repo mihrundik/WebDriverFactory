@@ -9,7 +9,7 @@
    - _mvn clean test_ - запуск с параметрами по-умолчанию
    - _mvn clean test -Dbrowser=safari_ - запуск с указанием браузера
    - _mvn clean test -Dbrowser=firefox -DfirefoxOptions='--kiosk,--incognito'_ - запуск с указанием браузера и опций через запятую
-   - _mvn clean test -Dbrowser=chrom -DfirefoxOptions='--headless' -Dtest=FirstTest_ - запуск с указанием браузера, опций и названия теста
+   - _mvn clean test -Dbrowser=chrome -DchromeOptions='--headless' -Dtest=FirstTest_ - запуск с указанием браузера, опций и названия теста
 
 
 ---
