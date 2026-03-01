@@ -14,7 +14,7 @@ import org.openqa.selenium.safari.SafariOptions;
 public class WebDriverFactory {
 
     public static WebDriver create(String browserName, Capabilities options) {
-        switch(browserName.toLowerCase()) {
+        switch (browserName.toLowerCase()) {
             case "chrome":
                 WebDriverManager.chromedriver().setup();
                 return initChromeDriver(options);
@@ -61,5 +61,4 @@ public class WebDriverFactory {
             return new SafariDriver(safariOptions);
         }
     }
-
 }
